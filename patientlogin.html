@@ -12,77 +12,77 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
 
     <!-- Main CSS-->
-    <link href="{% static "css\main.css" %}" rel="stylesheet" media="all">
-    <link href="{% static "css\main.css" %}" rel="stylesheet" media="all">
+    <link href="{% static "css/main.css" %}"rel="stylesheet" media="all">
     <style>
-    .input--style-5 {
-    background: #fff;
-    line-height: 50px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    padding: 0 22px;
-    font-size: 16px;
-    color: #000;
-}
-    .bg-gra-03 {
-    background: #f3edc8; /* fallback for old browsers */
-    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        .input--style-5 {
+        background: #fff;
+        line-height: 50px;
+        -webkit-border-radius: 5px;
+        -moz-border-radius: 5px;
+        border-radius: 5px;
+        padding: 0 22px;
+        font-size: 16px;
+        color: #000;
     }
-    .title {    
-    font-family:Montserrat;
-    font-size: 30px;
-    text-transform: uppercase;
-    font-weight: 700;
-    text-align: center;
-    color: #862b0d;
-    }
-
-    /* ==========================================================================
-    #CARD
-    ========================================================================== */
-    .card1 {
-    -webkit-border-radius: 3px;
-    -moz-border-radius: 3px;
-    border-radius: 3px;
-    background: #f3edc8;
-    }
-
-    .card-5 {
-    background: #f3edc8;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-    }
-
-    .card-5 .card-heading {
-    padding: 20px 0;
-    background: #f3edc8;
-    -webkit-border-top-left-radius: 10px;
-    -moz-border-radius-topleft: 10px;
-    border-top-left-radius: 10px;
-    -webkit-border-top-right-radius: 10px;
-    -moz-border-radius-topright: 10px;
-    border-top-right-radius: 10px;
-    }
-
-    .card-5 .card-body {
-    padding: 52px 85px;
-    padding-bottom: 73px;
-    }
-
-    @media (max-width: 767px) {
-    .card-5 .card-body {
-        padding: 40px 30px;
-        padding-bottom: 50px;
-    }
-    }
-
-
-    </style>
+        .bg-gra-03 {
+        background: #f3edc8; /* fallback for old browsers */
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        }
+        .title {    
+            font-family:Montserrat;
+        
+        font-size: 30px;
+        text-transform: uppercase;
+        font-weight: 700;
+        text-align: center;
+        color: #862b0d;
+        }
+    
+        /* ==========================================================================
+        #CARD
+        ========================================================================== */
+        .card1 {
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        background: #f3edc8;
+        }
+    
+        .card-5 {
+        background: #f3edc8;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10px;
+        border-radius: 10px;
+        -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+        -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+        box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+        }
+    
+        .card-5 .card-heading {
+        padding: 20px 0;
+        background: #f3edc8;
+        -webkit-border-top-left-radius: 10px;
+        -moz-border-radius-topleft: 10px;
+        border-top-left-radius: 10px;
+        -webkit-border-top-right-radius: 10px;
+        -moz-border-radius-topright: 10px;
+        border-top-right-radius: 10px;
+        }
+    
+        .card-5 .card-body {
+        padding: 52px 85px;
+        padding-bottom: 73px;
+        }
+    
+        @media (max-width: 767px) {
+        .card-5 .card-body {
+            padding: 40px 30px;
+            padding-bottom: 50px;
+        }
+        }
+    
+    
+        </style>
   </head>
   <body>
     {% include "blood/navbar.html" %}
@@ -95,7 +95,7 @@
             <br><br><br>
             <div class="card1 card-5">
                 <div class="card-heading">
-                    <h2 class="title">Hospital Login</h2>
+                    <h2 class="title">Patient Login</h2>
                 </div>
                 <div class="card-body">
                     <form method="POST">
@@ -126,7 +126,7 @@
                         </div>
                     </form>
                     <br>
-                    <p style="text-align: center;">Don't have an account? <a style="text-decoration: none;" href="/hospital/patientsignup">Register Now</a></p>
+                    <p style="text-align: center;">Don't have an account? <a style="text-decoration: none;" href="/patient/patientsignup">Register Now</a></p>
 
                 </div>
             </div>

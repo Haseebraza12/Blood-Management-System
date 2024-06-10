@@ -1,4 +1,4 @@
-{% extends 'ngo/donorbase.html' %}
+{% extends 'patient/patientbase.html' %}
 {% block content %}
 {% load widget_tweaks %}
 {%load static%}
@@ -10,7 +10,7 @@
     
         <link href="{% static "css/main.css" %}"rel="stylesheet" media="all">
         <style>
-              /* ==========================================================================
+                         /* ==========================================================================
      #TITLE
      ========================================================================== */
   .title {
@@ -86,14 +86,14 @@
       
         <div style="margin-left: 70px;" class="card1 card-5">
             <div class="card-heading">
-                <h2 class="title">MAKE BLOOD REQUEST</h2>
+                <h2 class="title">Make Blood Request</h2>
             </div>
             <div class="card-body">
                 <form method="POST" autocomplete="off" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <div class="form-row">
-                        <div class="name">Patient's Name</div>
+                        <div class="name">Patient Name</div>
                         <div class="value">
                             <div class="input-group">
                                 {% render_field request_form.patient_name|attr:'required:true'  class="input--style-5"  %}
@@ -149,14 +149,13 @@
                             </div>
                         </div>
                     </div>
-
-                    
+            
 
 
 
 
                     <div class="text-center">
-                        <button class="btn btn--radius-2 btn-danger" type="submit">REQUEST</button>
+                        <button class="btn btn--radius-2 btn-danger" type="submit">Request</button>
                     </div>
                 </form>
                 <br>
