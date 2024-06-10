@@ -1,4 +1,4 @@
-{% extends 'donor/donorbase.html' %}
+{% extends 'ngo/donorbase.html' %}
 {% block content %}
 {% load widget_tweaks %}
 {%load static%}
@@ -8,9 +8,13 @@
 
         <!-- Main CSS-->
     
-        <link href="{% static "css/main.css" %}"rel="stylesheet" media="all">
+        <link href="{% static 'css/nain.css' %}" rel="stylesheet" media="all">
         <style>
-                   .title {
+            
+  /* ==========================================================================
+     #TITLE
+     ========================================================================== */
+  .title {
     font-size: 30px;
     text-transform: uppercase;
     font-weight: 700;
@@ -66,22 +70,13 @@
       padding-bottom: 50px;
     }
   }
-  .input--style-5 {
-    background: #ffffff;
-    line-height: 50px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    padding: 0 22px;
-    font-size: 16px;
-    color: #555;
-}
+  
         </style>
 </head>
 <div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
     <div class="wrapper wrapper--w790">
       
-        <div style="margin-left: 70px;" class="card card-5">
+        <div style="margin-left: 70px;" class="card1 card-5">
             <div class="card-heading">
                 <h2 class="title">DONATE BLOOD</h2>
             </div>

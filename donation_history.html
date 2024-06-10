@@ -1,4 +1,4 @@
-{% extends 'donor/donorbase.html' %}
+{% extends 'ngo/donorbase.html' %}
 {% block content %}
 {% load widget_tweaks %}
 {%load static%}
@@ -8,7 +8,10 @@
      color: white;
      padding: 8px;
    }
-   
+   .text-center {
+    text-align: center !important;
+    font-weight: 700;font-size: 32px;
+}
    .success {background-color: #4CAF50;} /* Green */
    .info {background-color: #2196F3;} /* Blue */
    .warning {background-color: #ff9800;} /* Orange */
@@ -18,7 +21,7 @@
    </head>
 <br><br>
 <div class="container">
-    <H4 class="text-center">My Donation History</H4><br>
+    <H4 class="text-center">Ngo Donation History</H4><br>
     <table class="table table-light table-hover table-bordered table-striped">
         <thead class="bg-dark">
             <tr>
