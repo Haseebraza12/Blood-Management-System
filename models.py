@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class Donor(models.Model):
+class Patient(models.Model):
     user=models.OneToOneField(User,on_delete=models.CASCADE)
-    profile_pic= models.ImageField(upload_to='profile_pic/Donor/',null=True,blank=True)
+    profile_pic= models.ImageField(upload_to='profile_pic/Patient/',null=True,blank=True)
 
-    
+    age=models.PositiveIntegerField()
     bloodgroup=models.CharField(max_length=10)
-    
+    disease=models.CharField(max_length=100)
+    doctorname=models.CharField(max_length=50)
 
     address = models.CharField(max_length=40)
     mobile = models.CharField(max_length=20,null=False)
@@ -20,14 +21,3 @@ class Donor(models.Model):
         return self
     def __str__(self):
         return self.user.first_name
-
-class BloodDonate(models.Model): 
-    donor=models.ForeignKey(Donor,on_delete=models.CASCADE)   
-    disease=models.CharField(max_length=100,default="Nothing")
-    age=models.PositiveIntegerField()
-    bloodgroup=models.CharField(max_length=10)
-    unit=models.PositiveIntegerField(default=0)
-    status=models.CharField(max_length=20,default="Pending")
-    date=models.DateField(auto_now=True)
-    def __str__(self):
-        return self.donor
