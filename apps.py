@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class NgoConfig(AppConfig):
-    name = 'ngo'
+class BloodConfig(AppConfig):
+    name = 'blood'

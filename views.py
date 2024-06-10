@@ -8,73 +8,325 @@ from django.conf import settings
 from datetime import date, timedelta
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
-from blood import forms as bforms
-from blood import models as bmodels
+from donor import models as dmodels
+from patient import models as pmodels
+from donor import forms as dforms
+from patient import forms as pforms
+from ngo import models as nmodels
+from ngo import forms as nforms
+from hospital import models as hmodels
+from hospital import forms as hforms
 
-def ngo_signup_view(request):
-    userForm=forms.NgoUserForm()
-    ngoForm=forms.NgoForm()
-    mydict={'userForm':userForm,'ngoForm':ngoForm}
+def home_view(request):
+    x=models.Stock.objects.all()
+    print(x)
+    if len(x)==0:
+        blood1=models.Stock()
+        blood1.bloodgroup="A+"
+        blood1.save()
+
+        blood2=models.Stock()
+        blood2.bloodgroup="A-"
+        blood2.save()
+
+        blood3=models.Stock()
+        blood3.bloodgroup="B+"
+        blood3.save()        
+
+        blood4=models.Stock()
+        blood4.bloodgroup="B-"
+        blood4.save()
+
+        blood5=models.Stock()
+        blood5.bloodgroup="AB+"
+        blood5.save()
+
+        blood6=models.Stock()
+        blood6.bloodgroup="AB-"
+        blood6.save()
+
+        blood7=models.Stock()
+        blood7.bloodgroup="O+"
+        blood7.save()
+
+        blood8=models.Stock()
+        blood8.bloodgroup="O-"
+        blood8.save()
+
+    if request.user.is_authenticated:
+        return HttpResponseRedirect('afterlogin')  
+    return render(request,'blood/index.html')
+
+def is_donor(user):
+    return user.groups.filter(name='DONOR').exists()
+
+
+def is_patient(user):
+    return user.groups.filter(name='PATIENT').exists()
+
+def is_ngo(user):
+    return user.groups.filter(name='NGO').exists()
+
+
+def afterlogin_view(request):
+    if is_donor(request.user):      
+        return redirect('donor/donor-dashboard')
+                
+    elif is_patient(request.user):
+        return redirect('patient/patient-dashboard')
+    elif is_ngo(request.user):
+        return redirect('ngo/donor-dashboard')
+    else:
+        return redirect('admin-dashboard')
+
+@login_required(login_url='adminlogin')
+def admin_dashboard_view(request):
+    totalunit=models.Stock.objects.aggregate(Sum('unit'))
+    dict={
+
+        'A1':models.Stock.objects.get(bloodgroup="A+"),
+        'A2':models.Stock.objects.get(bloodgroup="A-"),
+        'B1':models.Stock.objects.get(bloodgroup="B+"),
+        'B2':models.Stock.objects.get(bloodgroup="B-"),
+        'AB1':models.Stock.objects.get(bloodgroup="AB+"),
+        'AB2':models.Stock.objects.get(bloodgroup="AB-"),
+        'O1':models.Stock.objects.get(bloodgroup="O+"),
+        'O2':models.Stock.objects.get(bloodgroup="O-"),
+        'totaldonors':dmodels.Donor.objects.all().count(),
+        'totalbloodunit':totalunit['unit__sum'],
+        'totalrequest':models.BloodRequest.objects.all().count(),
+        'totalapprovedrequest':models.BloodRequest.objects.all().filter(status='Approved').count()
+    }
+    return render(request,'blood/admin_dashboard.html',context=dict)
+
+@login_required(login_url='adminlogin')
+def admin_blood_view(request):
+    dict={
+        'bloodForm':forms.BloodForm(),
+        'A1':models.Stock.objects.get(bloodgroup="A+"),
+        'A2':models.Stock.objects.get(bloodgroup="A-"),
+        'B1':models.Stock.objects.get(bloodgroup="B+"),
+        'B2':models.Stock.objects.get(bloodgroup="B-"),
+        'AB1':models.Stock.objects.get(bloodgroup="AB+"),
+        'AB2':models.Stock.objects.get(bloodgroup="AB-"),
+        'O1':models.Stock.objects.get(bloodgroup="O+"),
+        'O2':models.Stock.objects.get(bloodgroup="O-"),
+    }
     if request.method=='POST':
-        userForm=forms.NgoUserForm(request.POST)
-        ngoForm=forms.NgoForm(request.POST,request.FILES)
-        if userForm.is_valid() and ngoForm.is_valid():
+        bloodForm=forms.BloodForm(request.POST)
+        if bloodForm.is_valid() :        
+            bloodgroup=bloodForm.cleaned_data['bloodgroup']
+            stock=models.Stock.objects.get(bloodgroup=bloodgroup)
+            stock.unit=bloodForm.cleaned_data['unit']
+            stock.save()
+        return HttpResponseRedirect('admin-blood')
+    return render(request,'blood/admin_blood.html',context=dict)
+
+
+@login_required(login_url='adminlogin')
+def admin_donor_view(request):
+    donors=dmodels.Donor.objects.all()
+    return render(request,'blood/admin_donor.html',{'donors':donors})
+
+@login_required(login_url='adminlogin')
+def update_donor_view(request,pk):
+    donor=dmodels.Donor.objects.get(id=pk)
+    user=dmodels.User.objects.get(id=donor.user_id)
+    userForm=dforms.DonorUserForm(instance=user)
+    donorForm=dforms.DonorForm(request.FILES,instance=donor)
+    mydict={'userForm':userForm,'donorForm':donorForm}
+    if request.method=='POST':
+        userForm=dforms.DonorUserForm(request.POST,instance=user)
+        donorForm=dforms.DonorForm(request.POST,request.FILES,instance=donor)
+        if userForm.is_valid() and donorForm.is_valid():
             user=userForm.save()
             user.set_password(user.password)
             user.save()
-            ngo=ngoForm.save(commit=False)
-            ngo.user=user
-            ngo.bloodgroup=ngoForm.cleaned_data['bloodgroup']
-            ngo.save()
-            my_donor_group = Group.objects.get_or_create(name='NGO')
-            my_donor_group[0].user_set.add(user)
-        return HttpResponseRedirect('ngologin')
-    return render(request,'ngo/donorsignup.html',context=mydict)
+            donor=donorForm.save(commit=False)
+            donor.user=user
+            donor.bloodgroup=donorForm.cleaned_data['bloodgroup']
+            donor.save()
+            return redirect('admin-donor')
+    return render(request,'blood/update_donor.html',context=mydict)
 
 
-def ngo_dashboard_view(request):
-    donor= models.Ngo.objects.get(user_id=request.user.id)
-    dict={
-        'requestpending': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Pending').count(),
-        'requestapproved': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Approved').count(),
-        'requestmade': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).count(),
-        'requestrejected': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Rejected').count(),
-    }
-    return render(request,'ngo/donor_dashboard.html',context=dict)
+@login_required(login_url='adminlogin')
+def delete_donor_view(request,pk):
+    donor=dmodels.Donor.objects.get(id=pk)
+    user=User.objects.get(id=donor.user_id)
+    user.delete()
+    donor.delete()
+    return HttpResponseRedirect('/admin-donor')
+
+@login_required(login_url='adminlogin')
+def admin_patient_view(request):
+    patients=pmodels.Patient.objects.all()
+    return render(request,'blood/admin_patient.html',{'patients':patients})
 
 
-def ngo_blood_view(request):
-    donation_form=forms.DonationForm()
+@login_required(login_url='adminlogin')
+def update_patient_view(request,pk):
+    patient=pmodels.Patient.objects.get(id=pk)
+    user=pmodels.User.objects.get(id=patient.user_id)
+    userForm=pforms.PatientUserForm(instance=user)
+    patientForm=pforms.PatientForm(request.FILES,instance=patient)
+    mydict={'userForm':userForm,'patientForm':patientForm}
     if request.method=='POST':
-        donation_form=forms.DonationForm(request.POST)
-        if donation_form.is_valid():
-            blood_donate=donation_form.save(commit=False)
-            blood_donate.bloodgroup=donation_form.cleaned_data['bloodgroup']
-            ngo= models.Ngo.objects.get(user_id=request.user.id)
-            blood_donate.ngo=ngo
-            blood_donate.save()
-            return HttpResponseRedirect('donation-history')  
-    return render(request,'ngo/donate_blood.html',{'donation_form':donation_form})
+        userForm=pforms.PatientUserForm(request.POST,instance=user)
+        patientForm=pforms.PatientForm(request.POST,request.FILES,instance=patient)
+        if userForm.is_valid() and patientForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            patient=patientForm.save(commit=False)
+            patient.user=user
+            patient.bloodgroup=patientForm.cleaned_data['bloodgroup']
+            patient.save()
+            return redirect('admin-patient')
+    return render(request,'blood/update_patient.html',context=mydict)
 
-def donation_history_view(request):
-    ngo= models.Ngo.objects.get(user_id=request.user.id)
-    donations=models.BloodDonate.objects.all().filter(ngo=ngo)
-    return render(request,'ngo/donation_history.html',{'donations':donations})
 
-def make_request_view(request):
-    request_form=bforms.RequestForm()
+@login_required(login_url='adminlogin')
+def delete_patient_view(request,pk):
+    patient=pmodels.Patient.objects.get(id=pk)
+    user=User.objects.get(id=patient.user_id)
+    user.delete()
+    patient.delete()
+    return HttpResponseRedirect('/admin-patient')
+#Adding NGO
+@login_required(login_url='adminlogin')
+def admin_ngo_view(request):
+    donors=nmodels.Ngo.objects.all()
+    return render(request,'blood/admin_ngo.html',{'ngo':donors})
+
+@login_required(login_url='adminlogin')
+def update_ngo_view(request,pk):
+    donor=nmodels.Ngo.objects.get(id=pk)
+    user=nmodels.User.objects.get(id=donor.user_id)
+    userForm=nforms.NgoUserForm(instance=user)
+    donorForm=nforms.NgoForm(request.FILES,instance=donor)
+    mydict={'userForm':userForm,'ngoForm':donorForm}
     if request.method=='POST':
-        request_form=bforms.RequestForm(request.POST)
-        if request_form.is_valid():
-            blood_request=request_form.save(commit=False)
-            blood_request.bloodgroup=request_form.cleaned_data['bloodgroup']
-            donor= models.Ngo.objects.get(user_id=request.user.id)
-            blood_request.request_by_ngo=donor
-            blood_request.save()
-            return HttpResponseRedirect('request-history')  
-    return render(request,'ngo/makerequest.html',{'request_form':request_form})
+        userForm=nforms.NgoUserForm(request.POST,instance=user)
+        donorForm=nforms.NgoForm(request.POST,request.FILES,instance=donor)
+        if userForm.is_valid() and donorForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            donor=donorForm.save(commit=False)
+            donor.user=user
+            donor.bloodgroup=donorForm.cleaned_data['bloodgroup']
+            donor.save()
+            return redirect('admin-ngo')
+    return render(request,'blood/update_ngo.html',context=mydict)
 
-def request_history_view(request):
-    donor= models.Ngo.objects.get(user_id=request.user.id)
-    blood_request=bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor)
-    return render(request,'ngo/request_history.html',{'blood_request':blood_request})
+
+@login_required(login_url='adminlogin')
+def delete_ngo_view(request,pk):
+    donor=nmodels.Ngo.objects.get(id=pk)
+    user=User.objects.get(id=donor.user_id)
+    user.delete()
+    donor.delete()
+    return HttpResponseRedirect('/admin-ngo')
+############################# Hospital
+@login_required(login_url='adminlogin')
+def admin_hospital_view(request):
+    patients=hmodels.Hospital.objects.all()
+    return render(request,'blood/admin_hospital.html',{'patients':patients})
+
+
+@login_required(login_url='adminlogin')
+def update_hospital_view(request,pk):
+    patient=hmodels.Hospital.objects.get(id=pk)
+    user=hmodels.User.objects.get(id=patient.user_id)
+    userForm=hforms.HospitalUserForm(instance=user)
+    patientForm=hforms.HospitalForm(request.FILES,instance=patient)
+    mydict={'userForm':userForm,'patientForm':patientForm}
+    if request.method=='POST':
+        userForm=hforms.HospitalUserForm(request.POST,instance=user)
+        patientForm=hforms.HospitalForm(request.POST,request.FILES,instance=patient)
+        if userForm.is_valid() and patientForm.is_valid():
+            user=userForm.save()
+            user.set_password(user.password)
+            user.save()
+            patient=patientForm.save(commit=False)
+            patient.user=user
+            patient.bloodgroup=patientForm.cleaned_data['bloodgroup']
+            patient.save()
+            return redirect('admin-hospital')
+    return render(request,'blood/update_hospital.html',context=mydict)
+
+
+@login_required(login_url='adminlogin')
+def delete_hospital_view(request,pk):
+    patient=hmodels.Hospital.objects.get(id=pk)
+    user=User.objects.get(id=patient.user_id)
+    user.delete()
+    patient.delete()
+    return HttpResponseRedirect('/admin-hospital')
+
+
+#############################
+
+@login_required(login_url='adminlogin')
+def admin_request_view(request):
+    requests=models.BloodRequest.objects.all().filter(status='Pending')
+    return render(request,'blood/admin_request.html',{'requests':requests})
+
+@login_required(login_url='adminlogin')
+def admin_request_history_view(request):
+    requests=models.BloodRequest.objects.all().exclude(status='Pending')
+    return render(request,'blood/admin_request_history.html',{'requests':requests})
+
+@login_required(login_url='adminlogin')
+def admin_donation_view(request):
+    donations=dmodels.BloodDonate.objects.all()
+    return render(request,'blood/admin_donation.html',{'donations':donations})
+
+@login_required(login_url='adminlogin')
+def update_approve_status_view(request,pk):
+    req=models.BloodRequest.objects.get(id=pk)
+    message=None
+    bloodgroup=req.bloodgroup
+    unit=req.unit
+    stock=models.Stock.objects.get(bloodgroup=bloodgroup)
+    if stock.unit > unit:
+        stock.unit=stock.unit-unit
+        stock.save()
+        req.status="Approved"
+        
+    else:
+        message="Stock Doest Not Have Enough Blood To Approve This Request, Only "+str(stock.unit)+" Unit Available"
+    req.save()
+
+    requests=models.BloodRequest.objects.all().filter(status='Pending')
+    return render(request,'blood/admin_request.html',{'requests':requests,'message':message})
+
+@login_required(login_url='adminlogin')
+def update_reject_status_view(request,pk):
+    req=models.BloodRequest.objects.get(id=pk)
+    req.status="Rejected"
+    req.save()
+    return HttpResponseRedirect('/admin-request')
+
+@login_required(login_url='adminlogin')
+def approve_donation_view(request,pk):
+    donation=dmodels.BloodDonate.objects.get(id=pk)
+    donation_blood_group=donation.bloodgroup
+    donation_blood_unit=donation.unit
+
+    stock=models.Stock.objects.get(bloodgroup=donation_blood_group)
+    stock.unit=stock.unit+donation_blood_unit
+    stock.save()
+
+    donation.status='Approved'
+    donation.save()
+    return HttpResponseRedirect('/admin-donation')
+
+
+@login_required(login_url='adminlogin')
+def reject_donation_view(request,pk):
+    donation=dmodels.BloodDonate.objects.get(id=pk)
+    donation.status='Rejected'
+    donation.save()
+    return HttpResponseRedirect('/admin-donation')

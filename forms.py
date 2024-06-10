@@ -1,21 +1,14 @@
 from django import forms
-from django.contrib.auth.models import User
+
 from . import models
 
-class NgoUserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'username', 'password']
-        widgets = {
-            'password': forms.PasswordInput()
-        }
 
-class NgoForm(forms.ModelForm):
+class BloodForm(forms.ModelForm):
     class Meta:
-        model = models.Ngo
-        fields = ['ngo_name', 'bloodgroup', 'address', 'mobile', 'profile_pic']
+        model=models.Stock
+        fields=['bloodgroup','unit']
 
-class DonationForm(forms.ModelForm):
+class RequestForm(forms.ModelForm):
     class Meta:
-        model = models.BloodDonate
-        fields = ['age', 'bloodgroup', 'disease', 'unit']
+        model=models.BloodRequest
+        fields=['patient_name','patient_age','reason','bloodgroup','unit']
