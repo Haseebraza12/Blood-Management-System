@@ -90,16 +90,20 @@ Copy code
 pip install -r requirements.txt
 Apply migrations:
 
-bash
+
 Copy code
 python manage.py migrate
 Run the development server:
 
-bash
+
 Copy code
 python manage.py runserver
 Usage
 After setting up the project, open a web browser and go to http://127.0.0.1:8000/ to access the application. Users can register and log in according to their roles and perform the necessary actions as described in the methodology section.
+Contributer
+1) Husnain Ahmed
+2) Haseeb-ur-rehman
+3) Ibrahim Nadeem
 
 Contributing
 We welcome contributions from the community. If you wish to contribute, please follow these steps:
