@@ -1,0 +1,143 @@
+{%load static%}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.css">
+ 
+    <!-- Font special for pages-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
+
+    <!-- Main CSS-->
+    <link href="{% static "css/main.css" %}" rel="stylesheet" media="all">
+    <style>
+    .input--style-5 {
+    background: #fff;
+    line-height: 50px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 0 22px;
+    font-size: 16px;
+    color: #000;
+}
+    .bg-gra-03 {
+    background: #f3edc8; /* fallback for old browsers */
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .title {    
+        font-family:Montserrat;
+    
+    font-size: 30px;
+    text-transform: uppercase;
+    font-weight: 700;
+    text-align: center;
+    color: #862b0d;
+    }
+
+    /* ==========================================================================
+    #CARD
+    ========================================================================== */
+    .card1 {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background: #f3edc8;
+    }
+
+    .card-5 {
+    background: #f3edc8;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-5 .card-heading {
+    padding: 20px 0;
+    background: #f3edc8;
+    -webkit-border-top-left-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    border-top-left-radius: 10px;
+    -webkit-border-top-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    border-top-right-radius: 10px;
+    }
+
+    .card-5 .card-body {
+    padding: 52px 85px;
+    padding-bottom: 73px;
+    }
+
+    @media (max-width: 767px) {
+    .card-5 .card-body {
+        padding: 40px 30px;
+        padding-bottom: 50px;
+    }
+    }
+
+
+    </style>
+  </head>
+  <body>
+    {% include "blood/navbar.html" %}
+
+
+
+
+    <div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+        <div class="wrapper wrapper--w790">
+            <br><br><br>
+            <div class="card1 card-5">
+                <div class="card-heading">
+                    <h2 class="title">Admin Login</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="name">Username</div>
+                            <div class="value">
+                                <div class="input-group">
+                                   
+                                    {% render_field form.username class="input--style-5"%}
+                     
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="name">Password</div>
+                            <div class="value">
+                                <div class="input-group">
+                                    
+                                    {% render_field form.password class="input--style-5" %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        
+
+                        <div class="text-center">
+                            <button class="btn btn--radius-2 btn-danger btn-block" type="submit">Login</button>
+                        </div>
+                    </form>
+                                    </div>
+            </div>
+        </div>
+    </div>
+
+{% include "blood/footer.html" %}
+<!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  </body>
+</html>

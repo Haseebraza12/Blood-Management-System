@@ -1,0 +1,193 @@
+{% extends 'blood/adminbase.html' %}
+{% block content %}
+{% load widget_tweaks %}
+{%load static%}
+<head>
+        <!-- Font special for pages-->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
+
+        <!-- Main CSS-->
+    
+        <link href="{% static "css/main.css" %}"rel="stylesheet" media="all">
+        <style>
+            .title {
+   font-size: 30px;
+   text-transform: uppercase;
+   font-weight: 700;
+   text-align: center;
+   color: #000000;
+ }
+ 
+ /* ==========================================================================
+    #CARD
+    ========================================================================== */
+ .card1 {
+   -webkit-border-radius: 3px;
+   -moz-border-radius: 3px;
+   border-radius: 3px;
+   background: #b5c99a;
+ }
+ 
+ .card-5 {
+   background: #b5c99a4a;
+   -webkit-border-radius: 10px;
+   -moz-border-radius: 10px;
+   border-radius: 10px;
+   -webkit-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+   -moz-box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .card-5 .card-heading {
+   padding: 20px 0;
+   background: #b5c99a;
+   -webkit-border-top-left-radius: 10px;
+   -moz-border-radius-topleft: 10px;
+   border-top-left-radius: 10px;
+   -webkit-border-top-right-radius: 10px;
+   -moz-border-radius-topright: 10px;
+   border-top-right-radius: 10px;
+ }
+ .bg-gra-03 {
+   background: #f9f7e7;
+}
+ .card-5 .card-body {
+   padding: 52px 85px;
+   padding-bottom: 73px;
+ }
+ body {
+   font-family: "Open Sans", "Arial", "Helvetica Neue", sans-serif;
+   font-weight: 400;
+   font-size: 16px;
+}
+ @media (max-width: 767px) {
+   .card-5 .card-body {
+     padding: 40px 30px;
+     padding-bottom: 50px;
+   }
+ }
+ .input--style-5 {
+   background: #ffffff;
+   line-height: 50px;
+   -webkit-border-radius: 5px;
+   -moz-border-radius: 5px;
+   border-radius: 5px;
+   padding: 0 22px;
+   font-size: 16px;
+   color: #555;
+}
+</style>
+</head>
+<div class="page-wrapper bg-gra-03 p-t-45 p-b-50">
+    <div class="wrapper wrapper--w790">
+      
+        <div class="card card-5">
+            <div class="card-heading">
+                <h2 class="title">Edit Donor's Detail</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" autocomplete="off" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="name">First Name</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field userForm.first_name|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="name">Last Name</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field userForm.last_name|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="name">Username</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field userForm.username|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="name">Password</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field userForm.password|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                  
+                    <div class="form-row">
+                        <div class="name">Blood Group</div>
+                        <div class="value">
+                            <div class="input-group">
+                                <div class="rs-select2 js-select-simple select--no-search">
+                                    <select name="bloodgroup" class="form-control">
+                                        <option disabled="disabled" selected="selected">Please Select</option>
+                                        <option>O+</option>
+                                        <option>O-</option>
+                                        <option>A+</option>
+                                        <option>A-</option>
+                                        <option>B+</option>
+                                        <option>B-</option>
+                                        <option>AB+</option>
+                                        <option>AB-</option>
+                                    </select>
+                                    <div class="select-dropdown"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="name">Address</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field donorForm.address|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="name">Contact</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field donorForm.mobile|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="name">Profile Pic</div>
+                        <div class="value">
+                            <div class="input-group">
+                                {% render_field donorForm.profile_pic|attr:'required:true'  class="input--style-5"  %}
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div>
+                        <button class="btn btn--radius-2 btn-primary btn-block" type="submit">Make Changes</button>
+                    </div>
+                </form>
+                <br>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
