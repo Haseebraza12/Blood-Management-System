@@ -11,38 +11,55 @@ from django.contrib.auth.models import User
 from blood import forms as bforms
 from blood import models as bmodels
 
-
-def patient_signup_view(request):
-    userForm=forms.PatientUserForm()
-    patientForm=forms.PatientForm()
-    mydict={'userForm':userForm,'patientForm':patientForm}
+def ngo_signup_view(request):
+    userForm=forms.NgoUserForm()
+    ngoForm=forms.NgoForm()
+    mydict={'userForm':userForm,'ngoForm':ngoForm}
     if request.method=='POST':
-        userForm=forms.PatientUserForm(request.POST)
-        patientForm=forms.PatientForm(request.POST,request.FILES)
-        if userForm.is_valid() and patientForm.is_valid():
+        userForm=forms.NgoUserForm(request.POST)
+        ngoForm=forms.NgoForm(request.POST,request.FILES)
+        if userForm.is_valid() and ngoForm.is_valid():
             user=userForm.save()
             user.set_password(user.password)
             user.save()
-            patient=patientForm.save(commit=False)
-            patient.user=user
-            patient.bloodgroup=patientForm.cleaned_data['bloodgroup']
-            patient.save()
-            my_patient_group = Group.objects.get_or_create(name='PATIENT')
-            my_patient_group[0].user_set.add(user)
-        return HttpResponseRedirect('patientlogin')
-    return render(request,'patient/patientsignup.html',context=mydict)
+            ngo=ngoForm.save(commit=False)
+            ngo.user=user
+            ngo.bloodgroup=ngoForm.cleaned_data['bloodgroup']
+            ngo.save()
+            my_donor_group = Group.objects.get_or_create(name='NGO')
+            my_donor_group[0].user_set.add(user)
+        return HttpResponseRedirect('ngologin')
+    return render(request,'ngo/donorsignup.html',context=mydict)
 
-def patient_dashboard_view(request):
-    patient= models.Patient.objects.get(user_id=request.user.id)
+
+def ngo_dashboard_view(request):
+    donor= models.Ngo.objects.get(user_id=request.user.id)
     dict={
-        'requestpending': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).filter(status='Pending').count(),
-        'requestapproved': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).filter(status='Approved').count(),
-        'requestmade': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).count(),
-        'requestrejected': bmodels.BloodRequest.objects.all().filter(request_by_patient=patient).filter(status='Rejected').count(),
-
+        'requestpending': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Pending').count(),
+        'requestapproved': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Approved').count(),
+        'requestmade': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).count(),
+        'requestrejected': bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor).filter(status='Rejected').count(),
     }
-   
-    return render(request,'patient/patient_dashboard.html',context=dict)
+    return render(request,'ngo/donor_dashboard.html',context=dict)
+
+
+def ngo_blood_view(request):
+    donation_form=forms.DonationForm()
+    if request.method=='POST':
+        donation_form=forms.DonationForm(request.POST)
+        if donation_form.is_valid():
+            blood_donate=donation_form.save(commit=False)
+            blood_donate.bloodgroup=donation_form.cleaned_data['bloodgroup']
+            ngo= models.Ngo.objects.get(user_id=request.user.id)
+            blood_donate.ngo=ngo
+            blood_donate.save()
+            return HttpResponseRedirect('donation-history')  
+    return render(request,'ngo/donate_blood.html',{'donation_form':donation_form})
+
+def donation_history_view(request):
+    ngo= models.Ngo.objects.get(user_id=request.user.id)
+    donations=models.BloodDonate.objects.all().filter(ngo=ngo)
+    return render(request,'ngo/donation_history.html',{'donations':donations})
 
 def make_request_view(request):
     request_form=bforms.RequestForm()
@@ -51,13 +68,13 @@ def make_request_view(request):
         if request_form.is_valid():
             blood_request=request_form.save(commit=False)
             blood_request.bloodgroup=request_form.cleaned_data['bloodgroup']
-            patient= models.Patient.objects.get(user_id=request.user.id)
-            blood_request.request_by_patient=patient
+            donor= models.Ngo.objects.get(user_id=request.user.id)
+            blood_request.request_by_ngo=donor
             blood_request.save()
-            return HttpResponseRedirect('my-request')  
-    return render(request,'patient/makerequest.html',{'request_form':request_form})
+            return HttpResponseRedirect('request-history')  
+    return render(request,'ngo/makerequest.html',{'request_form':request_form})
 
-def my_request_view(request):
-    patient= models.Patient.objects.get(user_id=request.user.id)
-    blood_request=bmodels.BloodRequest.objects.all().filter(request_by_patient=patient)
-    return render(request,'patient/my_request.html',{'blood_request':blood_request})
+def request_history_view(request):
+    donor= models.Ngo.objects.get(user_id=request.user.id)
+    blood_request=bmodels.BloodRequest.objects.all().filter(request_by_ngo=donor)
+    return render(request,'ngo/request_history.html',{'blood_request':blood_request})

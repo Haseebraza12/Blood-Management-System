@@ -1,59 +1,16 @@
-"""bloodbankmanagement URL Configuration
+from django.urls import path
+from django.contrib.auth.views import LoginView
+from . import views as ngo_views  # Alias to avoid conflicts with other views
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.0/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path,include
-from django.contrib.auth.views import LogoutView,LoginView
-from blood import views
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    
-    path('donor/',include('donor.urls')),
-    path('ngo/',include('ngo.urls')),
-    path('patient/',include('patient.urls')),
-    path('hospital/',include('hospital.urls')),
-
-    
-    path('',views.home_view,name=''),
-    path('logout', LogoutView.as_view(template_name='blood/logout.html'),name='logout'),
-
-    path('afterlogin', views.afterlogin_view,name='afterlogin'),
-    path('adminlogin', LoginView.as_view(template_name='blood/adminlogin.html'),name='adminlogin'),
-    path('admin-dashboard', views.admin_dashboard_view,name='admin-dashboard'),
-    path('admin-blood', views.admin_blood_view,name='admin-blood'),
-    path('admin-donor', views.admin_donor_view,name='admin-donor'),
-    path('admin-ngo', views.admin_ngo_view,name='admin-ngo'),#adding ngo
-    path('admin-patient', views.admin_patient_view,name='admin-patient'),
-    path('admin-hospital', views.admin_hospital_view,name='admin-hospital'),#adding hospital
-    path('update-donor/<int:pk>', views.update_donor_view,name='update-donor'),
-    path('delete-donor/<int:pk>', views.delete_donor_view,name='delete-donor'),
-    path('update-ngo/<int:pk>', views.update_ngo_view,name='update-ngo'),
-    path('delete-ngo/<int:pk>', views.delete_ngo_view,name='delete-ngo'),
-    path('admin-request', views.admin_request_view,name='admin-request'),
-    path('update-patient/<int:pk>', views.update_patient_view,name='update-patient'),
-    path('delete-patient/<int:pk>', views.delete_patient_view,name='delete-patient'),
-
-    path('update-hospital/<int:pk>', views.update_hospital_view,name='update-hospital'),
-    path('delete-hospital/<int:pk>', views.delete_hospital_view,name='delete-hospital'),
-
-    path('admin-donation', views.admin_donation_view,name='admin-donation'),
-    path('approve-donation/<int:pk>', views.approve_donation_view,name='approve-donation'),
-    path('reject-donation/<int:pk>', views.reject_donation_view,name='reject-donation'),
-    path('admin-request-history', views.admin_request_history_view,name='admin-request-history'),
-    path('update-approve-status/<int:pk>', views.update_approve_status_view,name='update-approve-status'),
-    path('update-reject-status/<int:pk>', views.update_reject_status_view,name='update-reject-status'),
-   
+    path('donorlogin/', LoginView.as_view(template_name='ngo/donorlogin.html'), name='donorlogin'),
+    path('donorsignup/ngologin/', LoginView.as_view(template_name='ngo/donorlogin.html'), name='ngologin'),
+    path('donorsignup/', ngo_views.ngo_signup_view, name='ngosignup'),
+    path('donor-dashboard/', ngo_views.ngo_dashboard_view, name='ngo-dashboard'),
+    path('donate-blood/', ngo_views.ngo_blood_view, name='donate-blood'),
+    path('donation-history/', ngo_views.donation_history_view, name='donation-history'),
+    path('make-request/', ngo_views.make_request_view, name='make-request'),
+    path('make-request/request-history/request-history/',ngo_views.make_request_view, name='make-request'),
+    path('make-request/request-history/',ngo_views.make_request_view, name='make-request'),
+    path('request-history/', ngo_views.request_history_view, name='request-history'),
 ]
